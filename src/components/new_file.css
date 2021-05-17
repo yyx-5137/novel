@@ -1,0 +1,73 @@
+<template>
+	<div @load="onLoad">
+		<van-grid :gutter="10" @load="onLoad">
+			<van-grid-item v-for="value in 8" :key="value">
+				<van-image :src="novel_detail.img_src" />
+			</van-grid-item>
+		</van-grid>
+		<div class="footer">
+			<van-tabbar v-model="active">
+				<van-tabbar-item>书城
+					<img slot="icon" slot-scope="props" :src="props.active ? icon.active2 : icon.inactive2" />
+				</van-tabbar-item>
+				<van-tabbar-item @click="toBookStore()">书架
+					<img slot="icon" slot-scope="props" :src="props.active ? icon.active : icon.inactive" />
+				</van-tabbar-item>
+				<van-tabbar-item icon="setting-o">我的</van-tabbar-item>
+			</van-tabbar>
+		</div>
+	</div>
+</template>
+<script>
+	import {
+		Toast
+	} from 'vant';
+	// @ is an alias to /src
+	export default {
+		data() {
+			return {
+
+				active: 1,
+				icon: {
+					active: require("../assets/bookshelfactive.png"),
+					inactive: require("../assets/bookshelf.png"),
+					active2: require("../assets/bookstoreactive.png"),
+					inactive2: require("../assets/bookstore.png")
+				},
+				novel_detail: {
+					'img_src': ''
+				},
+				list: [],
+				user: {
+					'id': 1
+				}
+			};
+		},
+		methods: {
+			onLoad() {
+				Toast('dsjhfvhjsdvchjsdvchjsv')
+				setTimeout(() => {
+					this.novel_detail.img_src =
+						'https://bookcover.yuewen.com/qdbimg/349573/c_17755279506421504/180';
+
+
+				}, 1000);
+			},
+			toBookStore() {
+				this.$router.push({
+					path: '/bookstore',
+					query: {
+						id: this.user.id
+					}
+				});
+
+			},
+
+
+		}
+	}
+</script>
+<style>
+</style>
+
+curl --header "Content-Type: application/json" --request POST --data '{"bookId":2,"begin":1,"count":9}' localhost:8885/getBookPaperByCursor

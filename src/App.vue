@@ -1,28 +1,33 @@
 <template>
-  <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
-  </div>
+	<div id="app">
+		<div id="nav" v-show="$route.meta.istrun">
+			<router-link to="/">Home</router-link> |
+			<router-link to="/about">About</router-link>
+			<router-link to="/hello">Hello</router-link>
+		</div>
+		<router-view />
+	</div>
 </template>
 
-<script>
-import HelloWorld from './components/HelloWorld.vue'
-
-export default {
-  name: 'app',
-  components: {
-    HelloWorld
-  }
-}
-</script>
-
 <style>
-#app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
+	#app {
+		font-family: 'Avenir', Helvetica, Arial, sans-serif;
+		-webkit-font-smoothing: antialiased;
+		-moz-osx-font-smoothing: grayscale;
+		text-align: center;
+		color: #2c3e50;
+		margin-top: 60px;
+	}
 </style>
+<script>
+	// import axios from 'axios'
+	// axios.get("/aliapi/book_30001_45.html.txt").then((response) => {
+	// 	console.log(response.data)
+	// })
+	// axios.get("/baidu").then((response) => {
+	// 	console.log(response.data)
+	// })
+	// axios.get("/getAllNovelList").then((response) => {
+	// 	console.log(response.data)
+	// })
+</script>
