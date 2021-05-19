@@ -17,11 +17,15 @@
 
 
 		<!-- 小说列表 -->
-		<van-pull-refresh v-model="refreshing" @refresh="onRefresh">
-			<van-list v-model="loading" :finished="finished" finished-text="没有更多了" @load="onLoad">
+		<div v-show="notLogin">
+			<van-divider>请登录</van-divider>
+			</van-pull-refresh>
+		</div>
+		<div v-show="logined">
+			<van-divider>暂时没有更多了</van-divider>
+			</van-pull-refresh>
+		</div>
 
-			</van-list>
-		</van-pull-refresh>
 
 
 
@@ -35,6 +39,7 @@
 			return {
 				value: '',
 				currentDate: new Date(),
+				logined: false,
 				novel_detail: {
 					'book_id': '',
 					'book_name': '',
@@ -44,6 +49,7 @@
 					'tag': ''
 				},
 				list: [],
+				notLogin: true,
 				loading: false,
 				finished: false,
 				refreshing: false,
@@ -59,7 +65,20 @@
 				}
 			};
 		},
-		
+		mounted: function() {
+			if (this.$cookies.get("id") == null) {
+				this.notLogin = true;
+				this.list = [];
+			} else {
+				this.onLoad();
+				this.notLogin = false;
+				if (this.list == []) {
+					this.logined = true;
+				}
+			}
+
+		},
+
 		methods: {
 			toBookDetail(topitem) {
 				this.$router.push({
@@ -76,9 +95,11 @@
 				})
 			},
 			onLoad() {
-				this.loading = true;
+				let self = this;
+				console.log(self.$cookies.get("id"));
+				self.loading = true;
 				let data = {
-					"userId": this.$cookies.get("userId")
+					"userId": self.$cookies.get("id")
 				};
 				const headers = {
 					'Content-Type': 'application/json',
@@ -89,10 +110,12 @@
 
 
 				}).then((response) => {
-					if (this.refreshing) {
-						this.list = [];
-						this.refreshing = false;
+					console.log(response.data)
+					if (self.refreshing) {
+						self.list = [];
+						self.refreshing = false;
 					}
+					var l = [];
 					for (let i = 0; i < response.data.object.length; i++) {
 						var novel_detail = {
 							'book_id': '',
@@ -110,10 +133,12 @@
 						novel_detail.tag = response.data.object[i].tag;
 						novel_detail.book_id = response.data.object[i].id;
 						novel_detail.state = response.data.object[i].state;
-						this.list.push(novel_detail);
+						l.push(novel_detail);
 					}
-					this.loading = false;
-					this.finished = true;
+					self.list = l;
+					self.loading = false;
+					self.finished = true;
+					console.log(self.list);
 
 				})
 			},
