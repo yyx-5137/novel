@@ -162,6 +162,14 @@ module.exports = {
 					'^/adminBook': ''
 				}
 			},
+			'/updateImg': {
+				target: 'http://localhost:8885/updateImg/', // 这里后台的地址模拟的;应该填写你们真实的后台接口
+				ws: true,
+				changOrigin: true, //允许跨域
+				pathRewrite: {
+					'^/updateImg': ''
+				}
+			},
 			'/baidu': {
 				target: 'https://www.baidu.com/', //这里后台的地址模拟的;应该填写你们真实的后台接口
 				ws: true,

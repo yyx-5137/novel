@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<van-image round width="10rem" height="10rem" :src="user.imageSrc" @click="preview()" />
+		<van-image round width="10rem" height="10rem" :src="this.user.imageSrc" @click="preview()" />
 		<br />
 		<van-uploader :after-read="afterRead">
 			<van-button round class="textSpan" @click="changeImage()">更换头像</van-button>
@@ -22,6 +22,7 @@
 
 <script>
 	import {
+		ImagePreview,
 		Toast
 	} from 'vant';
 	import axios from 'axios';
@@ -33,22 +34,70 @@
 					'sex': '0',
 					'userIntroduction': '',
 					'userId': '',
-					'imageSrc': 'https://img01.yzcdn.cn/vant/cat.jpeg'
+					'imageSrc': 'https://img01.yzcdn.cn/vant/cat.jpeg',
+					'urlIsChange': true
+					// 'imageSrc': "https://yyx-novel.oss-cn-beijing.aliyuncs.com/1777.png"
 				},
 				notLoginShow: false,
 				loginShow: true
 			}
 		},
+		mounted: function() {
+			if (this.$cookies.get("id") != null) {
+				if (this.$cookies.get("userName") != null) {
+					this.user.userName = this.$cookies.get("userName");
+
+				}
+				if (this.$cookies.get("userIntroduction") != null) {
+					this.user.userIntroduction = this.$cookies.get("userIntroduction");
+
+				}
+				if (this.$cookies.get("userId") != null) {
+					this.user.userId = this.$cookies.get("userId");
+				}
+				if (this.$cookies.get("sex") != null) {
+					this.user.sex = this.$cookies.get("sex");
+
+				}
+				if (this.$cookies.get("imageSrc") != null) {
+					this.user.imageSrc = this.$cookies.get("imageSrc");
+
+				}
+			}
+		},
 		methods: {
 			preview() {
-				ImagePreview([user.image_src]);
+				ImagePreview([this.$cookies.get("imageSrc")]);
 			},
 			changeImage() {
 
 			},
 			afterRead(file) {
 				// 此时可以自行将文件上传至服务器
-				Toast(file);
+				let data = {
+					'content': file.content,
+					'path': this.$cookies.get("userId") + ".png"
+				};
+				const headers = {
+					'Content-Type': 'application/json',
+					'Authorization': 'JWT fefege...'
+				}
+				axios.post("/updateImg", data, {
+					headers: headers
+				}).then((response) => {
+					if (response.data.status == "fail") {
+						Toast("设置失败！");
+					} else {
+						Toast("设置成功");
+						location.reload();
+					}
+				})
+				console.log(this.$cookies.get("userId") + ".png")
+				this.user.imageSrc = "https://yyx-novel.oss-cn-beijing.aliyuncs.com/" + this.$cookies.get("userId") +
+					".png"
+				console.log("图片url ：", this.user.imageSrc)
+				this.user.urlIsChange = !this.user.urlIsChange
+				this.$cookies.set("imageSrc", this.user.imageSrc, "30d")
 			},
 			finishChange() {
 				let self = this;
@@ -59,8 +108,6 @@
 					'userId': self.$cookies.get("userId"),
 					'profileUrl': 'https://img01.yzcdn.cn/vant/cat.jpeg'
 				};
-				console.log("userName", self.user.userName);
-				console.log("data", data)
 				const headers = {
 					'Content-Type': 'application/json',
 					'Authorization': 'JWT fefege...'
@@ -68,7 +115,6 @@
 				axios.post("/updateUser", data, {
 					headers: headers
 				}).then((response) => {
-					console.log(response.data)
 					if (response.data.status == "fail") {
 						Toast("设置失败！");
 					} else {

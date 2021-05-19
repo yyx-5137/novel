@@ -116,7 +116,7 @@
 				console.log(file)
 			},
 			preview() {
-				ImagePreview(['https://img01.yzcdn.cn/vant/cat.jpeg']);
+				ImagePreview([this.$cookies.get("imageSrc")]);
 			},
 			changeMy() {
 
