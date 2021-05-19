@@ -228,6 +228,9 @@
 				})
 			},
 			readActive(item) {
+				var userId = this.$cookies.get("userId");
+				var bookId = this.$route.query.book_id;
+				var payInfo = userId + bookId;
 				if (this.currentPage == 3) {
 					if (this.$cookies.get(payInfo) == null) {
 						this.buyBookButton = true;
