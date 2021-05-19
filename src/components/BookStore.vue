@@ -59,6 +59,7 @@
 				}
 			};
 		},
+		
 		methods: {
 			toBookDetail(topitem) {
 				this.$router.push({
@@ -70,14 +71,14 @@
 						author: topitem.author,
 						book_introduction: topitem.book_introduction,
 						tag: topitem.tag,
-						state:topitem.state
+						state: topitem.state
 					}
 				})
 			},
 			onLoad() {
 				this.loading = true;
 				let data = {
-					"userId": "2407505137"
+					"userId": this.$cookies.get("userId")
 				};
 				const headers = {
 					'Content-Type': 'application/json',
@@ -85,14 +86,14 @@
 				}
 				axios.post("/getBookShelfByUser", data, {
 					headers: headers
-				
-				
+
+
 				}).then((response) => {
 					if (this.refreshing) {
 						this.list = [];
 						this.refreshing = false;
 					}
-					for(let i = 0; i < response.data.object.length; i++){
+					for (let i = 0; i < response.data.object.length; i++) {
 						var novel_detail = {
 							'book_id': '',
 							'book_name': '',
@@ -100,7 +101,7 @@
 							'image_src': '',
 							'book_introduction': '',
 							'tag': '',
-							'state':''
+							'state': ''
 						}
 						novel_detail.book_name = response.data.object[i].novelName;
 						novel_detail.author = response.data.object[i].name;
@@ -113,7 +114,7 @@
 					}
 					this.loading = false;
 					this.finished = true;
-					
+
 				})
 			},
 			onRefresh() {

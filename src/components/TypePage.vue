@@ -4,15 +4,20 @@
 			<el-col :span="1">
 				<div class="grid-content"></div>
 			</el-col>
-			<el-col :span="3">
-				<div class="grid-content">
-					<van-sidebar v-model="activeKey">
-						<van-sidebar-item v-for="item in tagList" :key="item" @click="showList(item)" :title=item>
 
-						</van-sidebar-item>
-					</van-sidebar>
-				</div>
-			</el-col>
+			<div>
+				<el-col :span="3">
+					<div class="grid-content">
+						<van-sidebar v-model="activeKey">
+							<van-sidebar-item v-for="item in tagList" :key="item" @click="showList(item)" :title=item>
+
+							</van-sidebar-item>
+						</van-sidebar>
+					</div>
+				</el-col>
+			</div>
+
+
 			<el-col :span="20">
 				<div class="grid-content">
 					<div>
@@ -72,12 +77,15 @@
 				bookurl: '/getTopBook'
 			}
 		},
-		
+
 		methods: {
 			showList(item) {
 				this.isShow = true
 				if (item != "所有") {
 					this.bookurl = "/getBookByTag"
+					this.list = [];
+				}else{
+					this.bookurl = "/getTopBook"
 				}
 				this.onLoad(item);
 			},

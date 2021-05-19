@@ -28,7 +28,9 @@ import {
 	Uploader,
 	Form,
 	Field,
-	Rate
+	Rate,
+	RadioGroup,
+	Radio
 } from 'vant';
 import {
 	Carousel,
@@ -42,6 +44,10 @@ import {
 	Main,
 	Footer
 } from 'element-ui';
+import VueCookies from 'vue-cookies'
+Vue.use(Radio);
+Vue.use(RadioGroup);
+Vue.use(VueCookies);
 Vue.use(Rate);
 Vue.use(Field);
 Vue.use(Form);
@@ -83,3 +89,8 @@ new Vue({
 	router,
 	render: h => h(App)
 }).$mount('#app')
+
+var events = require('events'); // 引入 events 模块
+var eventEmitter = new events.EventEmitter(); // 创建 eventEmitter 对象
+eventEmitter.setMaxListeners(100);
+require('events').EventEmitter.prototype._maxListeners = 100;

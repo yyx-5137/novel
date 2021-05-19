@@ -20,7 +20,10 @@
 					@click="toBookDetail(topitem)">
 					<!-- <router-link:to="{path: '/bookdetail', query: {id: topitem.book_id, book_name: topitem.book_name, image_src: topitem.image_src,author:topitem.author,book_introduction:topitem.book_introduction }}">-->
 					<van-image :src="topitem.image_src" />
-					<span class="titleSpan">{{ topitem.book_name }}</span>
+					<div class="titleSpan">
+						<span>{{ topitem.book_name }}</span>
+					</div>
+
 					<span class="authorSpan">{{ topitem.author }}</span>
 					<!-- </router-link> -->
 				</van-grid-item>
@@ -96,7 +99,12 @@
 				searchShow: false,
 			};
 		},
-
+		mounted: function() {
+			var events = require('events'); // 引入 events 模块
+			var eventEmitter = new events.EventEmitter(); // 创建 eventEmitter 对象
+			eventEmitter.setMaxListeners(100);
+			require('events').EventEmitter.prototype._maxListeners = 100;
+		},
 		methods: {
 
 			toBookDetail(topitem) {
@@ -136,12 +144,12 @@
 			},
 			onLoad() {
 
-
-				this.loading = true;
+				let self = this;
+				self.loading = true;
 				let data = {
-					"code": "200",
-					"userId": "2407505137"
+					"id": self.$cookies.get("id")
 				};
+				console.log(data);
 				const headers = {
 					'Content-Type': 'application/json',
 					'Authorization': 'JWT fefege...'
@@ -151,7 +159,7 @@
 
 
 				}).then((response) => {
-					this.showBookList(response);
+					self.showBookList(response);
 				})
 
 
@@ -186,6 +194,8 @@
 					} else {
 						this.list.push(novel_detail);
 					}
+
+
 
 				}
 

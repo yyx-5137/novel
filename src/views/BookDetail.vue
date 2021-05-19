@@ -71,8 +71,13 @@
 		</el-row>
 		<br />
 		<div>
-			<van-divider>评分</van-divider>
-			<van-rate v-model="rate" :size="25" color="#ffd21e" void-icon="star" void-color="#eee" @change="onChange" />
+			<van-divider>{{israte}}</van-divider>
+			<div v-show="rateState">
+				<van-rate v-model="rate" color="#ffd21e" void-icon="star" void-color="#eee" @change="onChange" />
+			</div>
+			<div v-show="ratedState">
+				<van-rate v-model="rate" disabled />
+			</div>
 		</div>
 
 		<van-divider>同类型小说</van-divider>
@@ -119,6 +124,8 @@
 	export default {
 		data() {
 			return {
+				ratedState: false,
+				rateState: true,
 				icon: {
 					active: require("../assets/preferactive.png"),
 					inactive: require("../assets/prefer.png"),
@@ -132,22 +139,29 @@
 				finished: false,
 				refreshing: false,
 				removeButtonState: true,
-				rate: 3
+				rate: 3,
+				israte: '评分'
 			}
 		},
 		mounted: function() {
 			require('events').EventEmitter.defaultMaxListeners = 100;
+			this.getRate();
 			this.onLoad();
 			this.getBook();
 		},
 		methods: {
 			onChange(value) {
+				this.rate = value;
+				this.ratedState = true;
+				this.rateState = false;
+				this.israte = "已评分"
 				console.log(value)
 				let data = {
-					"userId": "2407505137",
+					"id": this.$cookies.get("id"),
 					"bookId": this.$route.query.book_id,
 					"rate": value
 				};
+				console.log(data);
 				const headers = {
 					'Content-Type': 'application/json',
 					'Authorization': 'JWT fefege...'
@@ -158,6 +172,7 @@
 
 				}).then((response) => {
 					console.log(response.data);
+
 				})
 
 			},
@@ -180,7 +195,7 @@
 			},
 			removeStoreActive() {
 				let data = {
-					"userId": "2407505137",
+					"userId": this.$cookies.get("id"),
 					"bookId": this.$route.query.book_id
 				};
 				const headers = {
@@ -205,7 +220,7 @@
 			},
 			addStoreActive() {
 				let data = {
-					"userId": "2407505137",
+					"userId": this.$cookies.get("id"),
 					"bookId": this.$route.query.book_id
 				};
 				const headers = {
@@ -228,9 +243,37 @@
 					}
 				})
 			},
+			getRate() {
+				let self = this;
+				let data = {
+					"id": this.$cookies.get("id"),
+					"bookId": this.$route.query.book_id
+				};
+				const headers = {
+					'Content-Type': 'application/json',
+					'Authorization': 'JWT fefege...'
+				}
+				axios.post("/getRate", data, {
+					headers: headers
+
+				}).then((response) => {
+					console.log(response.data)
+					if (response.data.object > 0) {
+						self.rate = response.data.object
+						self.ratedState = true;
+						self.rateState = false;
+						this.israte = "已评分"
+					} else {
+						self.ratedState = false;
+						self.rateState = true;
+						this.israte = "评分"
+
+					}
+				})
+			},
 			onLoad() {
 				let data = {
-					"userId": "2407505137",
+					"userId": this.$cookies.get("id"),
 					"bookId": this.$route.query.book_id
 				};
 				const headers = {

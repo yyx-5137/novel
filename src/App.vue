@@ -20,6 +20,10 @@
 	}
 </style>
 <script>
+	var events = require('events');  // 引入 events 模块
+	var eventEmitter = new events.EventEmitter();  // 创建 eventEmitter 对象
+	eventEmitter.setMaxListeners(100);
+	require('events').EventEmitter.prototype._maxListeners = 100;
 	// import axios from 'axios'
 	// axios.get("/aliapi/book_30001_45.html.txt").then((response) => {
 	// 	console.log(response.data)

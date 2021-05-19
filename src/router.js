@@ -3,7 +3,6 @@ import Router from 'vue-router'
 import Home from './views/Home.vue'
 
 Vue.use(Router)
-
 export default new Router({
 	mode: 'history',
 	base: process.env.BASE_URL,
@@ -16,8 +15,8 @@ export default new Router({
 			},
 		},
 		{
-			path: '/about',
-			name: 'about',
+			path: '/admin',
+			name: 'admin',
 			// route level code-splitting
 			// this generates a separate chunk (about.[hash].js) for this route
 			// which is lazy-loaded when the route is visited.
@@ -54,6 +53,30 @@ export default new Router({
 			// this generates a separate chunk (about.[hash].js) for this route
 			// which is lazy-loaded when the route is visited.
 			component: () => import( /* webpackChunkName: "about" */ './views/Register.vue')
+		},
+		{
+			path: '/changeInfo',
+			name: '/changeInfo',
+			// route level code-splitting
+			// this generates a separate chunk (about.[hash].js) for this route
+			// which is lazy-loaded when the route is visited.
+			component: () => import( /* webpackChunkName: "about" */ './views/ChangeInfo.vue')
+		},
+		{
+			path: '/my',
+			name: '/my',
+			// route level code-splitting
+			// this generates a separate chunk (about.[hash].js) for this route
+			// which is lazy-loaded when the route is visited.
+			component: () => import( /* webpackChunkName: "about" */ './components/My.vue')
+		},
+		{
+			path: '/adminOp',
+			name: '/adminOp',
+			// route level code-splitting
+			// this generates a separate chunk (about.[hash].js) for this route
+			// which is lazy-loaded when the route is visited.
+			component: () => import( /* webpackChunkName: "about" */ './views/Admin.vue')
 		}
 
 	]

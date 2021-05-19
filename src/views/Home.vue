@@ -52,6 +52,12 @@
 				mainShow: true
 			};
 		},
+		mounted: function() {
+			var events = require('events'); // 引入 events 模块
+			var eventEmitter = new events.EventEmitter(); // 创建 eventEmitter 对象
+			eventEmitter.setMaxListeners(100);
+			require('events').EventEmitter.prototype._maxListeners = 100;
+		},
 		methods: {
 			toBookStore() {
 				this.bookstoreShow = true;

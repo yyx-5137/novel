@@ -70,4 +70,5 @@
 <style>
 </style>
 
-curl --header "Content-Type: application/json" --request POST --data '{"bookId":2,"begin":1,"count":9}' localhost:8885/getBookPaperByCursor
+curl --header "Content-Type: application/json" --request POST --data '{"adminStatus": "6", "bookId": "2"}' localhost:8885/adminBook
+userName: "hh", sex: "1", userIntroduction: "ewfsgsgsgd", userId: "1777", profileUrl: "https://img01.yzcdn.cn/vant/cat.jpeg"

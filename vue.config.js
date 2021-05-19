@@ -1,5 +1,9 @@
+require('events').EventEmitter.defaultMaxListeners = 0;
 module.exports = {
 	devServer: {
+		proxy: {
+			logLevel: "debug",
+		},
 		open: true,
 		host: 'localhost',
 		port: 8080,
@@ -108,6 +112,54 @@ module.exports = {
 				changOrigin: true, //允许跨域
 				pathRewrite: {
 					'^/doRate': ''
+				}
+			},
+			'/userLogin': {
+				target: 'http://localhost:8885/userLogin', // 这里后台的地址模拟的;应该填写你们真实的后台接口
+				ws: true,
+				changOrigin: true, //允许跨域
+				pathRewrite: {
+					'^/userLogin': ''
+				}
+			},
+			'/userRegister': {
+				target: 'http://localhost:8885/userRegister/', // 这里后台的地址模拟的;应该填写你们真实的后台接口
+				ws: true,
+				changOrigin: true, //允许跨域
+				pathRewrite: {
+					'^/userRegister': ''
+				}
+			},
+			'/updateUser': {
+				target: 'http://localhost:8885/updateUser/', // 这里后台的地址模拟的;应该填写你们真实的后台接口
+				ws: true,
+				changOrigin: true, //允许跨域
+				pathRewrite: {
+					'^/updateUser': ''
+				}
+			},
+			'/getRate': {
+				target: 'http://localhost:8885/getRate/', // 这里后台的地址模拟的;应该填写你们真实的后台接口
+				ws: true,
+				changOrigin: true, //允许跨域
+				pathRewrite: {
+					'^/getRate': ''
+				}
+			},
+			'/getUserTop': {
+				target: 'http://localhost:8885/getUserTop/', // 这里后台的地址模拟的;应该填写你们真实的后台接口
+				ws: true,
+				changOrigin: true, //允许跨域
+				pathRewrite: {
+					'^/getUserTop': ''
+				}
+			},
+			'/adminBook': {
+				target: 'http://localhost:8885/adminBook/', // 这里后台的地址模拟的;应该填写你们真实的后台接口
+				ws: true,
+				changOrigin: true, //允许跨域
+				pathRewrite: {
+					'^/adminBook': ''
 				}
 			},
 			'/baidu': {
