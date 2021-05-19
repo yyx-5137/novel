@@ -146,9 +146,20 @@
 
 				let self = this;
 				self.loading = true;
-				let data = {
-					"id": self.$cookies.get("id")
-				};
+				var url = "";
+				let data = {};
+				if (self.$cookies.get("id") == null) {
+					url = "/getTopBook";
+					data = {
+						"id": 6
+					};
+				} else {
+					url = "/getUserTop";
+					data = {
+						"id": self.$cookies.get("id")
+					};
+				}
+
 				console.log(data);
 				const headers = {
 					'Content-Type': 'application/json',
