@@ -147,7 +147,7 @@ module.exports = {
 				}
 			},
 			'/getUserTop': {
-				target: 'http://localhost:8885/getUserTop/', // 这里后台的地址模拟的;应该填写你们真实的后台接口
+				target: 'http://localhost:8885/getUserTop/', // 推荐小说接口
 				ws: true,
 				changOrigin: true, //允许跨域
 				pathRewrite: {

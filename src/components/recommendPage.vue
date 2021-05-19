@@ -156,7 +156,7 @@
 				}
 				// getTopBook
 				// getUserTop
-				axios.post("/getTopBook", data, {
+				axios.post("/getUserTop", data, {
 					headers: headers
 
 
