@@ -1,7 +1,6 @@
 <template>
 	<el-container>
 		<el-header>
-
 			<div class="titleSpan">
 				{{this.$route.query.book_name}}
 			</div>
@@ -69,6 +68,22 @@
 										</el-container>
 									</div>
 								</van-popup>
+								<van-popup v-model="buyBookButton">
+									<div style="width: 400px;height: 150px; background-color: #FFFFFF;">
+
+										<center>
+											<div style=" margin-top: 10%;"><span class="titleSpan">试读结束!</span></div>
+										</center>
+
+										<center>
+											<div style=" margin-top: 10%;">
+												<van-button type="primary" round @click="toPay()">购买整本书</van-button>
+											</div>
+
+										</center>
+
+									</div>
+								</van-popup>
 							</div>
 						</el-col>
 						<el-col :span="4">
@@ -102,6 +117,7 @@
 		},
 		data() {
 			return {
+				buyBookButton: false,
 				show: false,
 				novel_text: '',
 				loading: false,
@@ -119,7 +135,24 @@
 			};
 		},
 		mounted: function() {
-			this.onBegin();
+			var userId = this.$cookies.get("userId");
+			var bookId = this.$route.query.book_id;
+			var payInfo = userId + bookId;
+			console.log(this.$cookies.get(payInfo));
+			if (this.currentPage == 3) {
+				if (this.$cookies.get(payInfo) != null) {
+					this.buyBookButton = false;
+					this.onBegin();
+
+				} else {
+					this.buyBookButton = true;
+				}
+			} else {
+				this.buyBookButton = false;
+
+				this.onBegin();
+			}
+
 			this.onLoad();
 		},
 		methods: {
@@ -147,19 +180,43 @@
 
 			},
 			nextChapter() {
-				if (this.rowNum >= 0) {
-					this.lastState = false;
-				}
-				if (this.rowNum == this.list.length - 1) {
-					this.nextState = true;
+				var userId = this.$cookies.get("userId");
+				var bookId = this.$route.query.book_id;
+				var payInfo = userId + bookId;
+				if (this.currentPage == 3) {
+					if (this.$cookies.get(payInfo) == null) {
+						this.buyBookButton = true;
+					} else {
+						if (this.rowNum >= 0) {
+							this.lastState = false;
+						}
+						if (this.rowNum == this.list.length - 1) {
+							this.nextState = true;
+						} else {
+							this.rowNum = this.rowNum + 1;
+							this.nextState = false;
+						}
+
+						this.chapter_name = this.list[this.rowNum].chapterName;
+						this.buyBookButton = false;
+						this.onBegin();
+					}
 				} else {
-					this.rowNum = this.rowNum + 1;
-					this.nextState = false;
+					if (this.rowNum >= 0) {
+						this.lastState = false;
+					}
+					if (this.rowNum == this.list.length - 1) {
+						this.nextState = true;
+					} else {
+						this.rowNum = this.rowNum + 1;
+						this.nextState = false;
+					}
+
+					this.chapter_name = this.list[this.rowNum].chapterName;
+					this.buyBookButton = false;
+					this.onBegin();
 				}
 
-				this.chapter_name = this.list[this.rowNum].chapterName;
-
-				this.onBegin()
 			},
 			onBegin() {
 				axios.get("/getBookContents").then((response) => {
@@ -171,19 +228,49 @@
 				})
 			},
 			readActive(item) {
-				this.show = false;
+				if (this.currentPage == 3) {
+					if (this.$cookies.get(payInfo) == null) {
+						this.buyBookButton = true;
+					} else {
+						this.buyBookButton = false;
+						this.show = false;
 
-				console.log(item);
-				this.chapter_name = item.chapterName;
-				this.rowNum = item.rowNum - 1;
-				this.onBegin();
+						console.log(item);
+						this.chapter_name = item.chapterName;
+						this.rowNum = item.rowNum - 1;
+						this.onBegin();
+					}
+				} else {
+					this.buyBookButton = false;
+					this.show = false;
+
+					console.log(item);
+					this.chapter_name = item.chapterName;
+					this.rowNum = item.rowNum - 1;
+					this.onBegin();
+				}
+
 			},
 			getPage() {
 				this.begin = (this.currentPage - 1) * 10 + 1;
 				this.list = [];
 				this.onLoad();
 			},
+			buyBook() {
+				// this.currentPage >= 2
+				this.buyBookButton = true;
 
+
+			},
+			toPay() {
+				this.$router.push({
+					path: '/pay',
+					query: {
+						book_id: this.$route.query.book_id,
+						book_name: this.$route.query.book_name
+					}
+				})
+			},
 			onLoad() {
 				this.loading = true;
 				let data = {
