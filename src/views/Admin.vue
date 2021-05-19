@@ -49,16 +49,14 @@
 								<div class="authorSpan">{{item.state}}</div>
 							</el-col>
 							<el-col :span="3">
-								<van-button type="primary" @click="handleBook(item.book_id)"
-									:disabled="handleBookButton">上架
+								<van-button type="primary" @click="handleBook(item)" :disabled="item.handleStatus">上架
 								</van-button>
 							</el-col>
 							<el-col :span="3">
 								<van-button type="info" @click="toBookDetail(item)">查看</van-button>
 							</el-col>
 							<el-col :span="3">
-								<van-button type="danger" @click="removeBook(item.book_id)"
-									:disabled="removeBookButton">下架
+								<van-button type="danger" @click="removeBook(item)" :disabled="item.removeStatus">下架
 								</van-button>
 							</el-col>
 						</el-row>
@@ -71,16 +69,16 @@
 
 <script>
 	import axios from 'axios';
-
+	import {
+		Toast
+	} from 'vant';
 	export default {
 		data() {
 			return {
 				list: [],
 				novel: {
 
-				},
-				handleBookButton: true,
-				removeBookButton: false
+				}
 			}
 		},
 		mounted: function() {
@@ -101,9 +99,36 @@
 					}
 				})
 			},
-			handleBook(i) {
-				console.log(i)
+			handleBook(item) {
+				let i = item.book_id;
+				console.log("bookId", item.book_id)
 
+				let self = this;
+				let data = {
+					"adminStatus": "1",
+					"bookId": i
+				};
+				console.log(data);
+				const headers = {
+					'Content-Type': 'application/json',
+					'Authorization': 'JWT fefege...'
+				}
+				axios.post("/adminBook", data, {
+					headers: headers
+
+
+				}).then((response) => {
+					console.log(response.data);
+					if (response.data.object) {
+						Toast("上架成功！")
+						item.handleStatus = true;
+						item.removeStatus = false;
+					}
+				})
+			},
+			removeBook(item) {
+				let i = item.book_id;
+				console.log(item.book_id)
 				let self = this;
 				let data = {
 					"adminStatus": "0",
@@ -121,32 +146,9 @@
 				}).then((response) => {
 					console.log(response.data);
 					if (response.data.object) {
-						self.handleBookButton = true;
-						self.removeBookButton = false;
-					}
-				})
-			},
-			removeBook(i) {
-				console.log(i)
-				let self = this;
-				let data = {
-					"adminStatus": "0",
-					"bookId": "2"
-				};
-				console.log(data);
-				const headers = {
-					'Content-Type': 'application/json',
-					'Authorization': 'JWT fefege...'
-				}
-				axios.post("/adminBook", data, {
-					headers: headers
-
-
-				}).then((response) => {
-					console.log(response.data);
-					if (response.data.object) {
-						self.handleBookButton = false;
-						self.removeBookButton = true;
+						Toast("下架成功！")
+						item.handleStatus = false;
+						item.removeStatus = true;
 					}
 				})
 			},
@@ -181,7 +183,9 @@
 						'image_src': '',
 						'book_introduction': '',
 						'tag': '',
-						'state': ''
+						'state': '',
+						'handleStatus': true,
+						'removeStatus': false
 					}
 					novel_detail.book_name = response.data.object[i].novelName;
 					novel_detail.author = response.data.object[i].name;
@@ -190,9 +194,16 @@
 					novel_detail.tag = response.data.object[i].tag;
 					novel_detail.book_id = response.data.object[i].id;
 					novel_detail.state = response.data.object[i].state;
-					if (response.data.object[i].adminStatus == 1) {
-						novelList.push(novel_detail);
+					if (response.data.object[i].adminStatus == 0) {
+						novel_detail.handleStatus = false;
+						novel_detail.removeStatus = true;
+					} else {
+						novel_detail.handleStatus = true;
+						novel_detail.removeStatus = false;
 					}
+
+					novelList.push(novel_detail);
+
 
 				}
 				this.list = novelList;

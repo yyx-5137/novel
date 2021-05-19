@@ -154,7 +154,7 @@
 					'Content-Type': 'application/json',
 					'Authorization': 'JWT fefege...'
 				}
-				axios.post("/getAllNovelList", data, {
+				axios.post("/getTopBook", data, {
 					headers: headers
 
 

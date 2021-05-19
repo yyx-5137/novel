@@ -12,6 +12,10 @@
 	</div>
 </template>
 <script>
+	import {
+		Toast
+	} from 'vant';
+	import axios from 'axios';
 	export default {
 		data() {
 			return {
@@ -21,9 +25,32 @@
 		},
 		methods: {
 			onSubmit(values) {
-				this.$router.push({
-					path: '/adminOp',
-					query: {}
+				let self = this;
+				self.loading = true;
+				let data = {
+					"userId": values.userId,
+					"password": values.password
+				};
+				console.log(data);
+				const headers = {
+					'Content-Type': 'application/json',
+					'Authorization': 'JWT fefege...'
+				}
+				axios.post("/getTopBook", data, {
+					headers: headers
+
+
+				}).then((response) => {
+					console.log(response.data);
+					if (response.data.status == "success") {
+						Toast("登录成功！")
+						this.$router.push({
+							path: '/adminOp',
+							query: {}
+						})
+					}else{
+						Toast("用户名或密码错误！")
+					}
 				})
 			},
 		},
