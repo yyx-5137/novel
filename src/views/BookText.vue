@@ -130,14 +130,15 @@
 				rowNum: 0,
 				lastState: true,
 				nextState: false,
-				allPaperList: []
+				allPaperList: [],
+				allList: []
 
 			};
 		},
 		mounted: function() {
 			var userId = this.$cookies.get("userId");
 			var bookId = this.$route.query.book_id;
-			var payInfo = userId + bookId;
+			var payInfo = userId + "_" + bookId;
 			console.log(this.$cookies.get(payInfo));
 			if (this.currentPage == 3) {
 				if (this.$cookies.get(payInfo) != null) {
@@ -152,7 +153,7 @@
 
 				this.onBegin();
 			}
-
+			this.getPage100();
 			this.onLoad();
 		},
 		methods: {
@@ -161,7 +162,7 @@
 			},
 			lastChapter() {
 				this.onBegin();
-				if (this.rowNum != this.list.length - 1) {
+				if (this.rowNum != this.allList.length - 1) {
 					this.nextState = false;
 				}
 				if (this.rowNum == 0) {
@@ -172,7 +173,7 @@
 					this.lastState = false;
 
 				}
-				this.chapter_name = this.list[this.rowNum].chapterName;
+				this.chapter_name = this.allList[this.rowNum].chapterName;
 
 			},
 			getContents() {
@@ -182,7 +183,8 @@
 			nextChapter() {
 				var userId = this.$cookies.get("userId");
 				var bookId = this.$route.query.book_id;
-				var payInfo = userId + bookId;
+				var payInfo = userId + "_" + bookId;
+				
 				if (this.currentPage == 3) {
 					if (this.$cookies.get(payInfo) == null) {
 						this.buyBookButton = true;
@@ -190,14 +192,15 @@
 						if (this.rowNum >= 0) {
 							this.lastState = false;
 						}
-						if (this.rowNum == this.list.length - 1) {
+						if (this.rowNum == this.allList.length - 1) {
 							this.nextState = true;
 						} else {
 							this.rowNum = this.rowNum + 1;
 							this.nextState = false;
 						}
+						console.log(this.allList[this.rowNum]);
 
-						this.chapter_name = this.list[this.rowNum].chapterName;
+						this.chapter_name = this.allList[this.rowNum].chapterName;
 						this.buyBookButton = false;
 						this.onBegin();
 					}
@@ -205,17 +208,18 @@
 					if (this.rowNum >= 0) {
 						this.lastState = false;
 					}
-					if (this.rowNum == this.list.length - 1) {
+					if (this.rowNum == this.allList.length - 1) {
 						this.nextState = true;
 					} else {
 						this.rowNum = this.rowNum + 1;
 						this.nextState = false;
 					}
 
-					this.chapter_name = this.list[this.rowNum].chapterName;
+					this.chapter_name = this.allList[this.rowNum].chapterName;
 					this.buyBookButton = false;
 					this.onBegin();
 				}
+				console.log(this.rowNum);
 
 			},
 			onBegin() {
@@ -230,8 +234,8 @@
 			readActive(item) {
 				var userId = this.$cookies.get("userId");
 				var bookId = this.$route.query.book_id;
-				var payInfo = userId + bookId;
-				if (this.currentPage == 3) {
+				var payInfo = userId + "_" + bookId;
+				if (this.currentPage >= 3) {
 					if (this.$cookies.get(payInfo) == null) {
 						this.buyBookButton = true;
 					} else {
@@ -275,6 +279,7 @@
 				})
 			},
 			onLoad() {
+				let self = this;
 				this.loading = true;
 				let data = {
 					"bookId": this.$route.query.book_id,
@@ -290,9 +295,9 @@
 
 
 				}).then((response) => {
-					if (this.refreshing) {
-						this.list = [];
-						this.refreshing = false;
+					if (self.refreshing) {
+						self.list = [];
+						self.refreshing = false;
 					}
 
 					for (let i = 0; i < response.data.object.length; i++) {
@@ -304,13 +309,55 @@
 						chapterInfo.chapterId = response.data.object[i].id;
 						chapterInfo.chapterName = response.data.object[i].chapterName;
 						chapterInfo.rowNum = response.data.object[i].rowNum;
-						this.list.push(chapterInfo);
+						self.list.push(chapterInfo);
 					}
-					this.chapter_name = this.list[0].chapterName;
+					self.chapter_name = self.list[0].chapterName;
 
-					if (this.list.length > 0) {
-						this.finished = true;
-						this.loading = false;
+					if (self.list.length > 0) {
+						self.finished = true;
+						self.loading = false;
+					}
+
+				})
+			},
+			getPage100() {
+				let self = this;
+				this.loading = true;
+				let data = {
+					"bookId": this.$route.query.book_id,
+					"begin": this.begin,
+					"count": 100
+				};
+				const headers = {
+					'Content-Type': 'application/json',
+					'Authorization': 'JWT fefege...'
+				}
+				axios.post("/getBookPaperByCursor", data, {
+					headers: headers
+
+
+				}).then((response) => {
+					if (self.refreshing) {
+						self.list = [];
+						self.refreshing = false;
+					}
+
+					for (let i = 0; i < response.data.object.length; i++) {
+						var chapterInfo = {
+							"chapterId": '',
+							"chapterName": '',
+							"rowNum": ''
+						}
+						chapterInfo.chapterId = response.data.object[i].id;
+						chapterInfo.chapterName = response.data.object[i].chapterName;
+						chapterInfo.rowNum = response.data.object[i].rowNum;
+						self.allList.push(chapterInfo);
+					}
+					self.chapter_name = self.list[0].chapterName;
+
+					if (self.list.length > 0) {
+						self.finished = true;
+						self.loading = false;
 					}
 
 				})

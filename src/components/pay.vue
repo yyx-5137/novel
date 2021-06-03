@@ -23,6 +23,7 @@
 				console.log(payInfo);
 				console.log(this.$cookies.get("userId"))
 				this.$cookies.set(payInfo, "ok");
+				console.log(this.$cookies.get(payInfo));
 				this.$router.push({
 					path: '/booktext',
 					query: {
