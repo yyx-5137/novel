@@ -145,35 +145,49 @@
 		},
 		mounted: function() {
 			require('events').EventEmitter.defaultMaxListeners = 100;
-			this.getRate();
+			var user_id = this.$cookies.get("userId");
+			if (user_id != null) {
+				this.getRate();
+			}
 			this.onLoad();
 			this.getBook();
 		},
 		methods: {
 			onChange(value) {
-				this.rate = value;
-				this.ratedState = true;
-				this.rateState = false;
-				this.israte = "已评分"
-				console.log(value)
-				let data = {
-					"id": this.$cookies.get("id"),
-					"bookId": this.$route.query.book_id,
-					"rate": value
-				};
-				console.log(data);
-				const headers = {
-					'Content-Type': 'application/json',
-					'Authorization': 'JWT fefege...'
+				var user_id = this.$cookies.get("userId");
+				if (user_id != null) {
+					this.rate = value;
+					this.ratedState = true;
+					this.rateState = false;
+					this.israte = "已评分"
+					console.log(value)
+					let data = {
+						"id": this.$cookies.get("id"),
+						"bookId": this.$route.query.book_id,
+						"rate": value
+					};
+					console.log(data);
+					const headers = {
+						'Content-Type': 'application/json',
+						'Authorization': 'JWT fefege...'
+					}
+					axios.post("/doRate", data, {
+						headers: headers
+
+
+					}).then((response) => {
+						console.log(response.data);
+
+					})
+
+				} else {
+					this.$router.push({
+						path: '/login',
+						query: {
+
+						}
+					})
 				}
-				axios.post("/doRate", data, {
-					headers: headers
-
-
-				}).then((response) => {
-					console.log(response.data);
-
-				})
 
 			},
 			preferActive() {
@@ -194,54 +208,75 @@
 				})
 			},
 			removeStoreActive() {
-				let data = {
-					"userId": this.$cookies.get("id"),
-					"bookId": this.$route.query.book_id
-				};
-				const headers = {
-					'Content-Type': 'application/json',
-					'Authorization': 'JWT fefege...'
-				}
-				axios.post("/removeBookShelfByUser", data, {
-					headers: headers
-
-				}).then((response) => {
-					console.log(response.data);
-					if (response.data.object == true) {
-						Toast("已移出！");
-						this.buttonState = false;
-						this.removeButtonState = true;
-						this.bookshelf = '加入书架';
-					} else {
-						this.buttonState = false;
-						Toast("移出书架失败！")
+				var user_id = this.$cookies.get("userId");
+				if (user_id != null) {
+					let data = {
+						"userId": this.$cookies.get("id"),
+						"bookId": this.$route.query.book_id
+					};
+					const headers = {
+						'Content-Type': 'application/json',
+						'Authorization': 'JWT fefege...'
 					}
-				})
+					axios.post("/removeBookShelfByUser", data, {
+						headers: headers
+
+					}).then((response) => {
+						console.log(response.data);
+						if (response.data.object == true) {
+							Toast("已移出！");
+							this.buttonState = false;
+							this.removeButtonState = true;
+							this.bookshelf = '加入书架';
+						} else {
+							this.buttonState = false;
+							Toast("移出书架失败！")
+						}
+					})
+				} else {
+					this.$router.push({
+						path: '/login',
+						query: {
+
+						}
+					})
+				}
+
 			},
 			addStoreActive() {
-				let data = {
-					"userId": this.$cookies.get("id"),
-					"bookId": this.$route.query.book_id
-				};
-				const headers = {
-					'Content-Type': 'application/json',
-					'Authorization': 'JWT fefege...'
-				}
-				axios.post("/addBookShelfByUser", data, {
-					headers: headers
-
-				}).then((response) => {
-					console.log(response.data);
-					if (response.data.object == true) {
-						Toast("加入书架成功！");
-						this.buttonState = true;
-						this.removeButtonState = false;
-						this.bookshelf = '已加入';
-					} else {
-						this.buttonState = false;
-						Toast("加入书架失败！")
+				var user_id = this.$cookies.get("userId");
+				if (user_id != null) {
+					let data = {
+						"userId": this.$cookies.get("id"),
+						"bookId": this.$route.query.book_id
+					};
+					const headers = {
+						'Content-Type': 'application/json',
+						'Authorization': 'JWT fefege...'
 					}
-				})
+					axios.post("/addBookShelfByUser", data, {
+						headers: headers
+
+					}).then((response) => {
+						console.log(response.data);
+						if (response.data.object == true) {
+							Toast("加入书架成功！");
+							this.buttonState = true;
+							this.removeButtonState = false;
+							this.bookshelf = '已加入';
+						} else {
+							this.buttonState = false;
+							Toast("加入书架失败！")
+						}
+					})
+				} else {
+					this.$router.push({
+						path: '/login',
+						query: {
+
+						}
+					})
+				}
 			},
 			getRate() {
 				let self = this;

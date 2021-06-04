@@ -184,8 +184,8 @@
 				var userId = this.$cookies.get("userId");
 				var bookId = this.$route.query.book_id;
 				var payInfo = userId + "_" + bookId;
-				
-				if (this.currentPage == 3) {
+
+				if (this.rowNum >= 20) {
 					if (this.$cookies.get(payInfo) == null) {
 						this.buyBookButton = true;
 					} else {
@@ -270,13 +270,24 @@
 
 			},
 			toPay() {
-				this.$router.push({
-					path: '/pay',
-					query: {
-						book_id: this.$route.query.book_id,
-						book_name: this.$route.query.book_name
-					}
-				})
+				var user_id = this.$cookies.get("userId");
+				if (user_id == null) {
+					this.$router.push({
+						path: '/login',
+						query: {
+
+						}
+					})
+				} else {
+					this.$router.push({
+						path: '/pay',
+						query: {
+							book_id: this.$route.query.book_id,
+							book_name: this.$route.query.book_name
+						}
+					})
+				}
+
 			},
 			onLoad() {
 				let self = this;
